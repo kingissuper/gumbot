@@ -1,3 +1,6 @@
+# OWN GITIGNORE:
+
+# GITHUB PYTHON TEMPLATE:
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
