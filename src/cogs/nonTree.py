@@ -4,8 +4,9 @@ class Cog(commands.Cog):
         self.bot = bot
     
     @commands.command()
+    @commands.is_owner()
     async def sync(self, ctx):
-        await self.tree.sync()
+        await self.bot.tree.sync()
         await ctx.send("Synced tree!")
     @commands.command(name="ping")
     async def ping(self, ctx):

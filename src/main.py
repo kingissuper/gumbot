@@ -4,10 +4,9 @@ from os import environ as env
 
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=env.get("COMMAND_PREFIX", "!"), intents=Intents.all())
+        super().__init__(command_prefix=env.get("COMMAND_PREFIX", "!"), intents=Intents.all(), owner_id=int(env.get("OWNER_ID", None)))
         print(self.command_prefix)
         self.token = env.get("TOKEN")
-        self.owner_id = env.get("OWNER_ID", None)
 
     def run(self):
         super().run(self.token, reconnect=True)
