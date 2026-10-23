@@ -8,9 +8,11 @@ class nonTree(commands.Cog):
     async def sync(self, ctx):
         await self.bot.tree.sync()
         await ctx.send("Synced tree!")
+        print("synced tree")
     @commands.command(name="ping")
     async def ping(self, ctx):
         await ctx.send("Pong!")
+        print("sent pong")
 
 async def setup(bot):
     await bot.add_cog(nonTree(bot))

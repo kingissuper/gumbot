@@ -24,6 +24,7 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         }
         converted_value = round(value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0), 2)
         await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
+        print(f"converted {from_unit} to {to_unit} with {value}")
 
 async def setup(bot):
     await bot.add_cog(unitConversion(bot))
