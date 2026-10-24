@@ -31,6 +31,25 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         #send back the values with the according units
         await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
         print(f"converted {from_unit} to {to_unit} with {value}")
+    @app_commands.command(name="weight", description="Convert weight units")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.choices()
+    async def weight(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+        #unit conversion rates
+        RATES = {
+            "milligrams": 0.001,
+            "grams": 1.0,
+            "kilograms": 1000.0,
+            "ounces": 28.349523125,
+            "pounds": 453.59237,
+            "tonne": 1000000.0,
+            "ton": 907184.74
+        }
+        #calculate the converted value and round to 2 decimal places
+        converted_value = round(value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0), 2)
+        #send back the values with the according units
+        await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
+        print(f"converted {from_unit} to {to_unit} with {value}")
 
 async def setup(bot):
     await bot.add_cog(unitConversion(bot))
