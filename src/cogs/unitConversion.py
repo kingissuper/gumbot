@@ -26,10 +26,29 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
             "inches": 0.0254,
             "yards": 0.9144
         }
-        #calculate the converted value and round to 2 decimal places
-        converted_value = round(value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0), 2)
+        #calculate the converted value
+        converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
+        #send back the values with the according units and significant numbers
+        await interaction.response.send_message(f"{value} {from_unit}={converted_value:.2g} {to_unit}")
+        print(f"converted {from_unit} to {to_unit} with {value}")
+    @app_commands.command(name="speed", description="Convert speed units")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.choices(
+        from_unit=[app_commands.Choice(name="Meters per second", value="m/s"), app_commands.Choice(name="Kilometers per hour", value="km/h"), app_commands.Choice(name="Miles per hour", value="mph"), app_commands.Choice(name="Feet per second", value="ft/s")],
+        to_unit=[app_commands.Choice(name="Meters per second", value="m/s"), app_commands.Choice(name="Kilometers per hour", value="km/h"), app_commands.Choice(name="Miles per hour", value="mph"), app_commands.Choice(name="Feet per second", value="ft/s")]
+    )
+    async def speed(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+        #unit conversion rates
+        RATES = {
+            "m/s": 1.0,
+            "km/h": 1 / 3.6,
+            "mph": 0.44704,
+            "ft/s": 0.3048
+        }
+        #calculate the converted value and round to 0 decimal places
+        converted_value = round(value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0), 0)
         #send back the values with the according units
-        await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
+        interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
         print(f"converted {from_unit} to {to_unit} with {value}")
     @app_commands.command(name="weight", description="Convert weight units")
     @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
@@ -74,7 +93,7 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
                 converted_value = round((value - 273.15) * 9/5 + 32, 0)
         #send back the values with the according units
         await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
-        print(f"converted {from_unit} to {to_unit} with {value}")
+        print(f"converted {from_unit} to {to_unit} with {value}") 
 
 async def setup(bot):
     await bot.add_cog(unitConversion(bot))

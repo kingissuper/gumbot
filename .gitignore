@@ -1,5 +1,5 @@
 # OWN GITIGNORE:
-
+.vscode/
 # GITHUB PYTHON TEMPLATE:
 # Byte-compiled / optimized / DLL files
 __pycache__/
