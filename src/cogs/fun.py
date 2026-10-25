@@ -8,12 +8,12 @@ class fun(commands.GroupCog, group_name="fun", group_description="Wow so funny")
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name="image2gif", description="conver images to gifs")
+    @app_commands.command(name="image2gif", description="convert images to gifs")
     async def image2gif(self, interaction: discord.Interaction, image: discord.Attachment):
         byte = await image.read()
-        img = Image.open(io.BytesIO(byte))
         gif_buffer = io.BytesIO()
-        img.save(gif_buffer, format="GIF")
+        with Image.open(io.BytesIO(byte)) as img:
+            img.save(gif_buffer, format="GIF")
         gif_buffer.seek(0)
         await interaction.response.send_message(file=discord.File(gif_buffer, filename="converted.gif"))
 
