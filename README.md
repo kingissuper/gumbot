@@ -3,6 +3,7 @@ A discord bot coded with the discord.py library.
 The name comes from why I'm coding this bot, to use in the discord server of the Twitch streamer [Gummiiy](https://www.twitch.tv/gummiiy)
 # Features
 - Unit conversion for distance, speed, weight and temperature
+> Also some very jank message logging that I will fix later
 # Installation
 ## Environment variables
 NOTE: you currently *have* to set all environment variables.
