@@ -13,6 +13,17 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         if significance is None:
             return str(int(value)) if value.is_integer() else str(value)
         return f"{value:.{significance}g}"
+    #helper function for embeds
+    @classmethod
+    def format_embed(self, title: str, value: float, result_value: float, from_unit: str, to_unit: str, significance: int|None):
+        embed = discord.Embed(colour=discord.Colour.greyple(), title=f"{title} conversion")
+        if significance == None:
+            embed.set_footer(text=f"No significance set")
+        else:
+            embed.set_footer(text=f"Significance of {significance}")
+        embed.add_field(name="Input", value=f"{value} {from_unit}", inline=True)
+        embed.add_field(name="Result", value=f"{result_value} {to_unit}", inline=True)
+        return embed
     
     #distance conversion, takes millimeters, centimeters, meters, kilometers, miles, feet, inches & yards as units
     @app_commands.command(name="distance", description="Convert distance units")
@@ -35,8 +46,9 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         }
         #calculate the converted value
         converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
+        result_value = self.format_result(converted_value, significance)
         #send back the values with the according units and significant numbers
-        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        await interaction.response.send_message(embed=self.format_embed(title="Distance", value=value, result_value=result_value, from_unit=from_unit, to_unit=to_unit, significance=significance))
         print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
     #speed conversion, takes meters per second, kilometers per hour, miles per hour & feet per second as units
     @app_commands.command(name="speed", description="Convert speed units")
@@ -55,8 +67,9 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         }
         #calculate the converted value
         converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
+        result_value = self.format_result(converted_value, significance)
         #send back the values with the according units and significant numbers
-        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        await interaction.response.send_message(embed=self.format_embed(title="Speed", value=value, result_value=result_value, from_unit=from_unit, to_unit=to_unit, significance=significance))
         print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
     #weight conversion, takes milligrams grams kilograms ounces pounds tonne & ton as units
     @app_commands.command(name="weight", description="Convert weight units")
@@ -75,8 +88,9 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         }
         #calculate the converted value
         converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
+        result_value = self.format_result(converted_value, significance)
         #send back the values with the according units and significant numbers
-        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        await interaction.response.send_message(embed=self.format_embed(title="Weight", value=value, result_value=result_value, from_unit=from_unit, to_unit=to_unit, significance=significance))
         print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
     #temperature conversion, takes celsius, fahrenheit & kelvin as units
     @app_commands.command(name="temperature", description="Convert temperature units")
@@ -102,8 +116,9 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
                 converted_value = value - 273.15
             elif to_unit == "fahrenheit":
                 converted_value = (value - 273.15) * 9 / 5 + 32
+        result_value = self.format_result(converted_value, significance)
         #send back the values with the according units and significant numbers
-        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        await interaction.response.send_message(embed=self.format_embed(title="Distance", value=value, result_value=result_value, from_unit=from_unit, to_unit=to_unit, significance=significance))
         print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
 
 async def setup(bot):
