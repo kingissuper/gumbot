@@ -5,7 +5,6 @@ from os import environ as env
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=env.get("COMMAND_PREFIX"), intents=Intents.all(), owner_id=int(env.get("OWNER_ID")))
-        print(self.command_prefix)
         self.token = env.get("TOKEN")
 
     def run(self):
@@ -13,6 +12,7 @@ class Bot(commands.Bot):
         
     async def on_ready(self):
         print(f'Logged in as {self.user.name} - {self.user.id}')
+        #Load cogs dynamically
         import cogs
         for cog in cogs.__all__:
             await cog.setup(self)
