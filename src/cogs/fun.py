@@ -1,4 +1,6 @@
 import discord
+import io
+from PIL import Image
 from discord.ext import commands
 from discord import app_commands
 
@@ -8,7 +10,11 @@ class fun(commands.GroupCog, group_name="fun", group_description="Wow so funny")
     
     @app_commands.command(name="image2gif")
     async def image2gif(self, interaction: discord.Interaction, image: discord.Attachment):
-        await interaction.response.send_message(image)
+        img = Image.open(image)
+        gif_buffer = io.BytesIO()
+        img.save(gif_buffer, format="GIF")
+        gif_buffer.seek(0)
+        await interaction.response.send_message(gif_buffer)
 
 async def setup(bot):
     await bot.add_cog(fun(bot))

@@ -1,6 +1,7 @@
 from discord import Intents
 from discord.ext import commands
 from os import environ as env
+import importlib
 
 class Bot(commands.Bot):
     def __init__(self):
@@ -17,10 +18,12 @@ class Bot(commands.Bot):
         for cog in cogs.__all__:
             await cog.setup(self)
             print(f"Loaded cog: {cog.__name__}")
-
+        @commands.is_owner()
+        async def reload_command(ctx):
+            await self.reload_cogs(ctx)
+        self.add_command(commands.Command(reload_command, name="reload"))
+        
     #AI generated, temporary development command to reload cogs without restarting the bot
-    @commands.command(name="reload")
-    @commands.is_owner()
     async def reload_cogs(self, ctx):
         import cogs
 
