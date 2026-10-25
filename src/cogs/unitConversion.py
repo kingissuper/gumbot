@@ -16,7 +16,7 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
     #helper function for embeds
     @classmethod
     def format_embed(self, title: str, value: float, result_value: float, from_unit: str, to_unit: str, significance: int|None):
-        embed = discord.Embed(colour=discord.Colour.greyple(), title=f"{title} conversion")
+        embed = discord.Embed(colour=discord.Colour.dark_blue(), title=f"{title} conversion")
         if significance == None:
             embed.set_footer(text=f"No significance set")
         else:
