@@ -50,6 +50,31 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         #send back the values with the according units
         await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
         print(f"converted {from_unit} to {to_unit} with {value}")
+    @app_commands.command(name="temperature", description="Convert temperature units")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.choices(
+        from_unit=[app_commands.Choice(name="Celsius", value="celsius"), app_commands.Choice(name="Fahrenheit", value="fahrenheit"), app_commands.Choice(name="Kelvin", value="kelvin")],
+        to_unit=[app_commands.Choice(name="Celsius", value="celsius"), app_commands.Choice(name="Fahrenheit", value="fahrenheit"), app_commands.Choice(name="Kelvin", value="kelvin")]
+    )
+    async def temperature(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+        if from_unit == "celsius":
+            if to_unit == "fahrenheit":
+                converted_value = round(value * 9/5 + 32, 0)
+            elif to_unit == "kelvin":
+                converted_value = round(value + 273.15, 0)
+        elif from_unit == "fahrenheit":
+            if to_unit == "celsius":
+                converted_value = round((value - 32) * 5/9, 0)
+            elif to_unit == "kelvin":
+                converted_value = round((value - 32) * 5/9 + 273.15, 0)
+        elif from_unit == "kelvin":
+            if to_unit == "celsius":
+                converted_value = round(value - 273.15, 0)
+            elif to_unit == "fahrenheit":
+                converted_value = round((value - 273.15) * 9/5 + 32, 0)
+        #send back the values with the according units
+        await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
+        print(f"converted {from_unit} to {to_unit} with {value}")
 
 async def setup(bot):
     await bot.add_cog(unitConversion(bot))
