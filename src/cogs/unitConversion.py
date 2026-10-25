@@ -7,14 +7,21 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
     def __init__(self, bot):
         self.bot = bot
 
+    #AI generated, helper function for number significance
+    @classmethod
+    def format_result(self, value: float, significance: int | None) -> str:
+        if significance is None:
+            return str(int(value)) if value.is_integer() else str(value)
+        return f"{value:.{significance}g}"
+    
     #distance conversion, takes millimeters, centimeters, meters, kilometers, miles, feet, inches & yards as units
     @app_commands.command(name="distance", description="Convert distance units")
-    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to", significance="The amount of significant numbers (default 2)")
     @app_commands.choices(
         from_unit=[app_commands.Choice(name="Millimeters", value="millimeters"), app_commands.Choice(name="Centimeters", value="centimeters"), app_commands.Choice(name="Meters", value="meters"), app_commands.Choice(name="Kilometers", value="kilometers"), app_commands.Choice(name="Miles", value="miles"), app_commands.Choice(name="Feet", value="feet"), app_commands.Choice(name="Inches", value="inches"), app_commands.Choice(name="Yards", value="yards")],
         to_unit=[app_commands.Choice(name="Millimeters", value="millimeters"), app_commands.Choice(name="Centimeters", value="centimeters"), app_commands.Choice(name="Meters", value="meters"), app_commands.Choice(name="Kilometers", value="kilometers"), app_commands.Choice(name="Miles", value="miles"), app_commands.Choice(name="Feet", value="feet"), app_commands.Choice(name="Inches", value="inches"), app_commands.Choice(name="Yards", value="yards")]
     )
-    async def distance(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+    async def distance(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str, significance: int|None=None):
         #unit conversion rates
         RATES = {
             "millimeters": 0.001,
@@ -29,15 +36,16 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
         #calculate the converted value
         converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
         #send back the values with the according units and significant numbers
-        await interaction.response.send_message(f"{value} {from_unit}={converted_value:.2g} {to_unit}")
-        print(f"converted {from_unit} to {to_unit} with {value}")
+        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
+    #speed conversion, takes meters per second, kilometers per hour, miles per hour & feet per second as units
     @app_commands.command(name="speed", description="Convert speed units")
-    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to", significance="The amount of significant numbers (default 0)")
     @app_commands.choices(
         from_unit=[app_commands.Choice(name="Meters per second", value="m/s"), app_commands.Choice(name="Kilometers per hour", value="km/h"), app_commands.Choice(name="Miles per hour", value="mph"), app_commands.Choice(name="Feet per second", value="ft/s")],
         to_unit=[app_commands.Choice(name="Meters per second", value="m/s"), app_commands.Choice(name="Kilometers per hour", value="km/h"), app_commands.Choice(name="Miles per hour", value="mph"), app_commands.Choice(name="Feet per second", value="ft/s")]
     )
-    async def speed(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+    async def speed(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str, significance: int|None=None):
         #unit conversion rates
         RATES = {
             "m/s": 1.0,
@@ -45,15 +53,16 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
             "mph": 0.44704,
             "ft/s": 0.3048
         }
-        #calculate the converted value and round to 0 decimal places
-        converted_value = round(value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0), 0)
-        #send back the values with the according units
-        interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
-        print(f"converted {from_unit} to {to_unit} with {value}")
+        #calculate the converted value
+        converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
+        #send back the values with the according units and significant numbers
+        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
+    #weight conversion, takes milligrams grams kilograms ounces pounds tonne & ton as units
     @app_commands.command(name="weight", description="Convert weight units")
-    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to", significance="The amount of significant numbers (default 2)")
     @app_commands.choices()
-    async def weight(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+    async def weight(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str, significance: int|None=None):
         #unit conversion rates
         RATES = {
             "milligrams": 0.001,
@@ -64,36 +73,38 @@ class unitConversion(commands.GroupCog, group_name="convert", group_description=
             "tonne": 1000000.0,
             "ton": 907184.74
         }
-        #calculate the converted value and round to 2 decimal places
-        converted_value = round(value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0), 2)
-        #send back the values with the according units
-        await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
-        print(f"converted {from_unit} to {to_unit} with {value}")
+        #calculate the converted value
+        converted_value = value * RATES.get(from_unit, 1.0) / RATES.get(to_unit, 1.0)
+        #send back the values with the according units and significant numbers
+        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
+    #temperature conversion, takes celsius, fahrenheit & kelvin as units
     @app_commands.command(name="temperature", description="Convert temperature units")
-    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to")
+    @app_commands.describe(value="USE . AS SEPARATOR. The value to convert", from_unit="The unit to convert from", to_unit="The unit to convert to", significance="The amount of significant numbers (default 0)")
     @app_commands.choices(
         from_unit=[app_commands.Choice(name="Celsius", value="celsius"), app_commands.Choice(name="Fahrenheit", value="fahrenheit"), app_commands.Choice(name="Kelvin", value="kelvin")],
         to_unit=[app_commands.Choice(name="Celsius", value="celsius"), app_commands.Choice(name="Fahrenheit", value="fahrenheit"), app_commands.Choice(name="Kelvin", value="kelvin")]
     )
-    async def temperature(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str):
+    async def temperature(self, interaction: discord.Interaction, value: float, from_unit: str, to_unit: str, significance: int|None=None):
+        converted_value = value
         if from_unit == "celsius":
             if to_unit == "fahrenheit":
-                converted_value = round(value * 9/5 + 32, 0)
+                converted_value = value * 9 / 5 + 32
             elif to_unit == "kelvin":
-                converted_value = round(value + 273.15, 0)
+                converted_value = value + 273.15
         elif from_unit == "fahrenheit":
             if to_unit == "celsius":
-                converted_value = round((value - 32) * 5/9, 0)
+                converted_value = (value - 32) * 5 / 9
             elif to_unit == "kelvin":
-                converted_value = round((value - 32) * 5/9 + 273.15, 0)
+                converted_value = (value - 32) * 5 / 9 + 273.15
         elif from_unit == "kelvin":
             if to_unit == "celsius":
-                converted_value = round(value - 273.15, 0)
+                converted_value = value - 273.15
             elif to_unit == "fahrenheit":
-                converted_value = round((value - 273.15) * 9/5 + 32, 0)
-        #send back the values with the according units
-        await interaction.response.send_message(f"{value} {from_unit}={converted_value} {to_unit}")
-        print(f"converted {from_unit} to {to_unit} with {value}") 
+                converted_value = (value - 273.15) * 9 / 5 + 32
+        #send back the values with the according units and significant numbers
+        await interaction.response.send_message(f"{value} {from_unit}={self.format_result(converted_value, significance)} {to_unit}")
+        print(f"converted {value} {from_unit} to {converted_value} {to_unit} with a significance of {significance}")
 
 async def setup(bot):
     await bot.add_cog(unitConversion(bot))
