@@ -12,17 +12,31 @@ class messageLogging(commands.Cog):
         embed = discord.Embed(timestamp=datetime.now(), colour=colour, title=title, description=f"By '{user}'<@{user_id}>")
         return embed
 
-        
     @commands.Cog.listener()
-    #TODO: rewrite for on_raw_message_edit
-    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
+    async def on_raw_message_edit(self, RawMessageUpdateEvent):
+        removed_attachments = []
+        after = RawMessageUpdateEvent.message
         if after.author.bot:
             return
+        if RawMessageUpdateEvent.cached_message:
+            before = RawMessageUpdateEvent.cached_message
+            before_value = before.content
+            for attachment in before.attachments:
+                if attachment not in after.attachments:
+                    removed_attachments.append(attachment.url)
+        else:
+            before_value = "Unknown"
+        if removed_attachments != []:
+            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Attachment deleted", user_id=after.author.id, user=after.author.global_name)
+            embed.add_field(name="Removed attachments:", value=removed_attachments, inline=False)
+            await after.channel.send(embed=embed)
+            return
         embed = self.format_embed(colour=discord.Colour.orange(), title="Message edited", user_id=after.author.id, user=after.author.global_name)
-        embed.add_field(name="Before", value=before.content)
+        embed.add_field(name="Before", value=before_value)
         embed.add_field(name="After", value=after.content)
         await after.channel.send(embed=embed)
-        # print(f"message edited by <@{after.author.id}>({after.author.global_name}): **before:** {before.content} **after:** {after.content}")
+        
+
     @commands.Cog.listener()
     #TODO: rewrite for on_raw_message_delete
     async def on_message_delete(self, message: discord.Message):
