@@ -22,12 +22,6 @@ class fun(commands.GroupCog, group_name="fun", group_description="Wow so funny")
         gif_buffer.seek(0)
         await interaction.followup.send(file=discord.File(gif_buffer, filename="converted.gif"))
         print("converted an image to a gif")
-    # @app_commands.command(name="searchurban", description="Search the urban dictionary")
-    # async def urban(self, interaction: discord.Interaction, search: str):
-    #     word = UrbanDict(search)
-    #     results = word.search()
-    #     interaction.response.send_message(results[0])
-
 
 async def setup(bot):
     await bot.add_cog(fun(bot))
