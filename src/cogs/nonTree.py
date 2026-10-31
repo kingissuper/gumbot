@@ -16,7 +16,7 @@ class nonTree(commands.Cog):
     async def ping(self, ctx):
         await ctx.send("Pong!")
         print("sent pong")
-    #Development command, will be removed when out of test versions
+    #Development command, will be removed when out of test versions, only the bot owner can use this command
     @commands.command(name="reload")
     async def reload_command(self, ctx):
         for cog in cogs.__all__:
