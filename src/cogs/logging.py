@@ -39,6 +39,8 @@ class messageLogging(commands.Cog):
     async def on_raw_message_delete(self, RawMessageDeleteEvent):
         if RawMessageDeleteEvent.cached_message:
             message = RawMessageDeleteEvent.cached_message
+            if message.author.bot:
+                return
             message_value = message.content
             embed = self.format_embed(colour=discord.Colour.dark_red(), title="Message deleted", user_id=message.author.id, user=message.author.global_name)
             embed.add_field(name="Message", value=message.content)
