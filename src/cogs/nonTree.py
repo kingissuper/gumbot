@@ -1,5 +1,5 @@
 from discord.ext import commands
-
+import cogs
 class nonTree(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,6 +16,13 @@ class nonTree(commands.Cog):
     async def ping(self, ctx):
         await ctx.send("Pong!")
         print("sent pong")
+    #Development command, will be removed when out of test versions, only the bot owner can use this command
+    @commands.command(name="reload")
+    async def reload_command(self, ctx):
+        for cog in cogs.__all__:
+            await ctx.bot.reload_extension(cog.__name__)
+        await ctx.send("Reloaded all extensions(cogs)!")
+        print("Cogs reloaded")
 
 async def setup(bot):
     await bot.add_cog(nonTree(bot))
