@@ -9,8 +9,9 @@ class messageLogging(commands.Cog):
     
     #helper function for embeds
     @classmethod
-    def format_embed(self, title: str, colour: cls, user_id: str|None, user: str|None):
-        embed = discord.Embed(timestamp=datetime.now(), colour=colour, title=title, description=f"By '{user}'<@{user_id}>")
+    def format_embed(self, title: str, colour: cls, author: discord.Message.author|None, message_id: int):
+        embed = discord.Embed(timestamp=datetime.now(), colour=colour, title=title, description=f"By '{author.global_name}'<@{author.id}>")
+        embed.set_footer(text=f"Author ID; {author.id if author else "Unknown"}, Message ID; {message_id}")
         return embed
 
     #Listener for edited messages
@@ -35,12 +36,12 @@ class messageLogging(commands.Cog):
             before_value = "Unknown"
         #Send the embed for attachment changes if there was one
         if removed_attachments != []:
-            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Attachment deleted", user_id=after.author.id, user=after.author.global_name)
+            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Attachment deleted", author=after.author, message_id=RawMessageUpdateEvent.message_id)
             embed.add_field(name="Removed attachments:", value=removed_attachments, inline=False)
             await after.channel.send(embed=embed)
             return
         #Otherwise send the message changes
-        embed = self.format_embed(colour=discord.Colour.orange(), title="Message edited", user_id=after.author.id, user=after.author.global_name)
+        embed = self.format_embed(colour=discord.Colour.orange(), title="Message edited", author=after.author, message_id=RawMessageUpdateEvent.message_id)
         embed.add_field(name="Before", value=before_value)
         embed.add_field(name="After", value=after.content)
         await after.channel.send(embed=embed)
@@ -57,14 +58,14 @@ class messageLogging(commands.Cog):
                 return
             message_value = message.content
             #Create the message embed and send it
-            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Message deleted", user_id=message.author.id, user=message.author.global_name)
+            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Message deleted", author=message.author, message_id=RawMessageDeleteEvent.message_id)
             embed.add_field(name="Message", value=message.content)
             await message.channel.send(embed=embed)
         #If the deleted message content wasn't cached
         else:
             message_value = "Unknown"
             channel = await self.bot.fetch_channel(RawMessageDeleteEvent.channel_id)
-            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Message deleted", user_id=None, user=None)
+            embed = self.format_embed(colour=discord.Colour.dark_red(), title="Message deleted", author=None, message_id=RawMessageDeleteEvent.message_id)
             embed.add_field(name="Message", value=message_value)
             await channel.send(embed=embed)
         print(f"message was removed in {RawMessageDeleteEvent.channel_id}")
